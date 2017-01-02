@@ -49,6 +49,8 @@ class AssignManualQuants(models.TransientModel):
         for line in self.quants_lines:
             if line.selected:
                 quants.append([line.quant, line.qty])
+                move.restrict_lot_id = line.lot_id
+                move.restrict_partner_id = line.owner_id
         self.pool['stock.quant'].quants_reserve(
             self.env.cr, self.env.uid, quants, move, context=self.env.context)
         return {}
@@ -72,6 +74,7 @@ class AssignManualQuants(models.TransientModel):
             'selected': x in move.reserved_quant_ids,
             'qty': x.qty if x in move.reserved_quant_ids else 0,
             'location_id': x.location_id.id,
+            'owner_id': x.owner_id.id,
         } for x in available_quants]
         res.update({'quants_lines': quants_lines})
         res = self._convert_to_write(self._convert_to_cache(res))
@@ -111,6 +114,9 @@ class AssignManualQuantsLines(models.TransientModel):
         comodel_name='stock.quant.package', string='Package',
         related='quant.package_id', readonly=True,
         groups="stock.group_tracking_lot")
+    owner_id = fields.Many2one(
+        comodel_name='res.partner', string='Owner',
+        related='quant.owner_id', readonly=True)
     qty = fields.Float(
         string='QTY', digits=dp.get_precision('Product Unit of Measure'))
     selected = fields.Boolean(string='Select')
