@@ -49,8 +49,6 @@ class AssignManualQuants(models.TransientModel):
         for line in self.quants_lines:
             if line.selected:
                 quants.append([line.quant, line.qty])
-                move.restrict_lot_id = line.lot_id
-                move.restrict_partner_id = line.owner_id
         self.pool['stock.quant'].quants_reserve(
             self.env.cr, self.env.uid, quants, move, context=self.env.context)
         return {}
