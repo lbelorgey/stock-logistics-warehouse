@@ -13,6 +13,7 @@
                             <field name="in_date" />
                             <field name="lot_id" />
                             <field name="package_id" />
+                            <field name="owner_id" groups="stock.group_tracking_owner"/>
                             <field name="selected" />
                             <field name="qty" attrs="{'readonly':[('selected', '=' ,False)]}" sum="qty"/>
                         </tree>
